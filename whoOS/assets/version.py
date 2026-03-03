@@ -1,0 +1,11 @@
+VERSION = 'beta 1.3'
+OS_NAME = 'who? Os'
+SCREEN_W = 480
+SCREEN_H = 320
+FPS = 30
+
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
+GRAY = (128, 128, 128)
+DARK = (20, 20, 20)
+GREEN = (0, 255, 0)
