@@ -2,6 +2,7 @@ import pygame
 import subprocess
 from PIL import Image, ImageDraw, ImageFont
 from assets.version import *
+from core.clock_settings import save as save_clock
 from datetime import datetime
 
 OLED_W = 128
@@ -170,3 +171,4 @@ def run_clock(screen, clock):
                 elif event.key == pygame.K_RETURN:
                     key = options[selected]
                     settings[key] = not settings[key]
+                    save_clock(settings)

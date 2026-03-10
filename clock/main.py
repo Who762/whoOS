@@ -52,8 +52,8 @@ def init_display():
         return None
 
 def draw_screen(oled, blink_state, cpu_temp, dht_temp=None, dht_hum=None):
-        s = load_settings()
     try:
+        s = load_settings()
         now = datetime.now()
         time_str = now.strftime('%H:%M:%S') if s.get('show_seconds', True) else now.strftime('%H:%M')
         sec_str = now.strftime(':%S')
@@ -87,7 +87,8 @@ def draw_screen(oled, blink_state, cpu_temp, dht_temp=None, dht_hum=None):
             ms_w = draw.textlength(ms_str, font=font_ms)
         except Exception:
             ms_w = 25
-        draw.text(((WIDTH - ms_w) // 2, 39), ms_str, font=font_ms, fill=255)
+        if s.get('show_ms', True):
+            draw.text(((WIDTH - ms_w) // 2, 39), ms_str, font=font_ms, fill=255)
         if cpu_temp is not None:
             if cpu_temp >= CPU_TEMP_MAX and blink_state:
                 cpu_text = '!{}C'.format(int(cpu_temp))
@@ -95,7 +96,8 @@ def draw_screen(oled, blink_state, cpu_temp, dht_temp=None, dht_hum=None):
                 cpu_text = '{}C'.format(int(cpu_temp))
         else:
             cpu_text = '!CPU' if blink_state else 'CPU'
-        draw.text((0, 46), cpu_text, font=font_med, fill=255)
+        if s.get('show_cpu', True):
+            draw.text((0, 46), cpu_text, font=font_med, fill=255)
         if dht_temp is not None:
             dht_str = '{}C {}%'.format(int(dht_temp), int(dht_hum))
         else:
@@ -104,8 +106,10 @@ def draw_screen(oled, blink_state, cpu_temp, dht_temp=None, dht_hum=None):
             dht_w = draw.textlength(dht_str, font=font_med)
         except Exception:
             dht_w = 40
-        draw.text((WIDTH - dht_w - 1, 46), dht_str, font=font_med, fill=255)
-        draw.text((0, 55), date_str, font=font_ms, fill=255)
+        if s.get('show_dht', True):
+            draw.text((WIDTH - dht_w - 1, 46), dht_str, font=font_med, fill=255)
+        if s.get('show_date', True):
+            draw.text((0, 55), date_str, font=font_ms, fill=255)
         errors = [e for k, e in error_handler.errors.items() if k not in ('cpu', 'dht')]
         if errors:
             err_text = ('!' if blink_state else '') + ' '.join(errors)

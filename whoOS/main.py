@@ -31,10 +31,10 @@ def main():
         action = run_menu(screen, clock)
 
         if action == 'terminal':
-            run_terminal()
-            pygame.init()
+            pygame.display.quit()
+            subprocess.run(['xterm', '-bg', 'black', '-fg', 'green', '-fs', '12', '-fullscreen'])
+            pygame.display.init()
             screen = pygame.display.set_mode((SCREEN_W, SCREEN_H), pygame.FULLSCREEN)
-            clock = pygame.time.Clock()
         elif action == 'files':
             run_files(screen, clock)
         elif action == 'settings':
