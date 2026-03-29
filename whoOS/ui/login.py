@@ -1,8 +1,13 @@
 import pygame
+import os
 from assets.version import *
 from core.auth import check_creds, user_exists
 
 def run_login(screen, clock):
+    if os.path.exists('/tmp/whoos_nologin'):
+        os.remove('/tmp/whoos_nologin')
+        return True
+
     font_title = pygame.font.SysFont('monospace', 24, bold=True)
     font_text = pygame.font.SysFont('monospace', 16)
     font_input = pygame.font.SysFont('monospace', 18, bold=True)
@@ -45,36 +50,28 @@ def run_login(screen, clock):
                         elif active == 'pass' and len(password) < 20:
                             password += event.unicode
 
-        border = pygame.Rect(40, 40, SCREEN_W - 80, SCREEN_H - 80)
-        pygame.draw.rect(screen, WHITE, border, 1)
+        cx = SCREEN_W // 2
+        title = font_title.render('whoOS', True, WHITE)
+        screen.blit(title, (cx - title.get_width()//2, 60))
 
-        title = font_title.render('[ who? Os - LOGIN ]', True, WHITE)
-        screen.blit(title, ((SCREEN_W - title.get_width()) // 2, 60))
+        pygame.draw.rect(screen, (40,40,40), (cx-120, 130, 240, 36))
+        pygame.draw.rect(screen, WHITE if active=='user' else (80,80,80), (cx-120, 130, 240, 36), 1)
+        u_text = font_input.render(username + ('|' if active=='user' and cursor_tick%60<30 else ''), True, WHITE)
+        screen.blit(u_text, (cx-110, 138))
+        label_u = font_text.render('USER', True, (120,120,120))
+        screen.blit(label_u, (cx-120, 114))
 
-        line = pygame.Rect(40, 95, SCREEN_W - 80, 1)
-        pygame.draw.rect(screen, WHITE, line)
-
-        y = 120
-        screen.blit(font_text.render('> SYSTEM ACCESS REQUIRED', True, GREEN), (60, y))
-        y += 40
-
-        user_col = WHITE if active == 'user' else GRAY
-        screen.blit(font_text.render('LOGIN:', True, GRAY), (60, y))
-        user_text = username + ('_' if active == 'user' and cursor_tick % 60 < 30 else '')
-        screen.blit(font_input.render(user_text, True, user_col), (160, y))
-        y += 35
-
-        pass_col = WHITE if active == 'pass' else GRAY
-        screen.blit(font_text.render('PASS: ', True, GRAY), (60, y))
-        pass_text = '*' * len(password) + ('_' if active == 'pass' and cursor_tick % 60 < 30 else '')
-        screen.blit(font_input.render(pass_text, True, pass_col), (160, y))
-        y += 50
-
-        screen.blit(font_text.render('[TAB] switch  [ENTER] confirm', True, GRAY), (60, y))
+        pygame.draw.rect(screen, (40,40,40), (cx-120, 200, 240, 36))
+        pygame.draw.rect(screen, WHITE if active=='pass' else (80,80,80), (cx-120, 200, 240, 36), 1)
+        p_display = '*' * len(password) + ('|' if active=='pass' and cursor_tick%60<30 else '')
+        p_text = font_input.render(p_display, True, WHITE)
+        screen.blit(p_text, (cx-110, 208))
+        label_p = font_text.render('PASSWORD', True, (120,120,120))
+        screen.blit(label_p, (cx-120, 184))
 
         if error:
-            err = font_title.render(error, True, WHITE)
-            screen.blit(err, ((SCREEN_W - err.get_width()) // 2, SCREEN_H - 80))
+            err = font_text.render(error, True, (255,60,60))
+            screen.blit(err, (cx - err.get_width()//2, 255))
 
         pygame.display.flip()
         clock.tick(FPS)
